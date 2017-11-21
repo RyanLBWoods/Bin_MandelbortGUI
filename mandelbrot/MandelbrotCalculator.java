@@ -1,6 +1,11 @@
 package mandelbrot;
 
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 
+import javax.swing.JComponent;
+import javax.swing.JFrame;
 
 /**
  * The MandelbrotCalculator class contains methods which establish the Mandelbrot set.
@@ -16,7 +21,7 @@ package mandelbrot;
  * @author jonl
  *
  */
-public class MandelbrotCalculator {
+public class MandelbrotCalculator extends JComponent{
 
     // Initial parameter values
     protected static final double INITIAL_MIN_REAL = -2.0;
@@ -24,10 +29,13 @@ public class MandelbrotCalculator {
     protected static final double INITIAL_MIN_IMAGINARY = -1.25;
     protected static final double INITIAL_MAX_IMAGINARY = 1.25;
     protected static final int INITIAL_MAX_ITERATIONS = 50;
+    protected static final int WIDTH = 800;
+    protected static final int HEIGHT = 600;
 
     // Default parameter values
     protected static final double DEFAULT_RADIUS_SQUARED = 4.0;
 
+    private BufferedImage bi;
 
 
     /**
@@ -41,7 +49,7 @@ public class MandelbrotCalculator {
      * @param radiusSquared the squared of the radius to use when determining whether Z escaped the circle in the complex plain or remained bounded. The value used is commonly 4.0.
      * @return the number iterations for the value of Z to grow outside of the bounding radius, or maxIterations if it never escaped.
      */
-    private int calcMandel(double cReal, double cImaginary, int maxIterations, double radiusSquared){
+    public int calcMandel(double cReal, double cImaginary, int maxIterations, double radiusSquared){
         // To work out Z_n+1 = Z_n^2 + C and establish whether C is in the Mandelbrot set or not
         // we need to
         //    square the current value of Z
@@ -99,5 +107,44 @@ public class MandelbrotCalculator {
             }
         }
         return mandelbrotData;
+    }
+    
+    public static void main(String[] args){
+        new MandelbrotCalculator();
+    }
+    
+    public MandelbrotCalculator() {
+        // TODO Auto-generated constructor stub
+        bi = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
+        
+        JFrame frame = new JFrame("Mandelbort Set");
+        frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
+        frame.setResizable(true);
+        frame.getContentPane().add(this);
+        frame.pack();
+        frame.setVisible(true);
+        
+    }
+    
+    public void render(){
+        MandelbrotCalculator mc = new MandelbrotCalculator();
+        int[][] data = mc.calcMandelbrotSet(20, 25, INITIAL_MIN_REAL, INITIAL_MAX_REAL, INITIAL_MIN_IMAGINARY, INITIAL_MAX_IMAGINARY, INITIAL_MAX_ITERATIONS, DEFAULT_RADIUS_SQUARED);
+        for(int x = 0; x < WIDTH; x++){
+            for(int y = 0; x < HEIGHT; y++){
+                
+            }
+        }
+    }
+    
+    @Override
+    public void addNotify() {
+        // TODO Auto-generated method stub
+        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+    }
+    
+    @Override
+    public void paint(Graphics g) {
+        // TODO Auto-generated method stub
+        g.drawImage(bi, 0, 0, null);
     }
 }
