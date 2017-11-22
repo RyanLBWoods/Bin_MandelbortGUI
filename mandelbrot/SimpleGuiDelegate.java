@@ -185,7 +185,7 @@ public class SimpleGuiDelegate implements Observer, MouseListener {
      */
     private void setupComponents(){
         setupMenu();
-        setupToolbar();
+//        setupToolbar();
         
         panel = new Panel(model);
         mainFrame.setTitle("Mandelbort Set Display");
@@ -239,7 +239,7 @@ public class SimpleGuiDelegate implements Observer, MouseListener {
         // TODO Auto-generated method stub
         System.out.println("Mouse pressed at " + e.getX() + ", " + e.getY());
         mousePx = e.getX();
-        mousePy = e.getY();
+        mousePy = e.getY() - 90;
     }
 
 
@@ -249,7 +249,7 @@ public class SimpleGuiDelegate implements Observer, MouseListener {
         // TODO Auto-generated method stub
         System.out.println("Mouse released at " + e.getX() + ", " + e.getY());
         mouseRx = e.getX();
-        mouseRy = e.getY();
+        mouseRy = e.getY() - 90;
         getNewLocation(mousePx, mousePy, mouseRx, mouseRy);
         
     }
@@ -281,13 +281,16 @@ public class SimpleGuiDelegate implements Observer, MouseListener {
         double originI = originMaxI - originMinI;
         
         double newMinR = originMinR + ((double)px / model.getXResolution() * originR);
-        double newMaxR = originMaxR - ((double)rx / model.getXResolution() * originR);
-        double newMinI = originMinI + ((double)py / model.getYResolution() * originI);
-        double newMaxI = originMaxI - ((double)ry / model.getYResolution() * originI);
+        double newMaxR = originMaxR - ((double)(model.getXResolution() - rx) / model.getXResolution() * originR);
+        double newMinI = originMinI + ((double)(model.getYResolution() - ry) / model.getYResolution() * originI);
+        double newMaxI = originMaxI - ((double)py / model.getYResolution() * originI);
+        
+        System.out.println(newMinR + ", " + newMaxR + "==");
+        System.out.println(newMinI + ", " + newMaxI);
         
         model.setNewData(newMinR, newMaxR, newMinI, newMaxI);
-        
-        new SimpleGuiDelegate(model);
+        panel.repaint();
+//        new SimpleGuiDelegate(model);
         
     }
     
