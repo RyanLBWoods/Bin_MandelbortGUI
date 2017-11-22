@@ -1,11 +1,12 @@
 package mandelbrot;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 /**
  * The MandelbrotCalculator class contains methods which establish the Mandelbrot set.
@@ -21,7 +22,7 @@ import javax.swing.JFrame;
  * @author jonl
  *
  */
-public class MandelbrotCalculator extends JComponent{
+public class MandelbrotCalculator extends JPanel{
 
     // Initial parameter values
     protected static final double INITIAL_MIN_REAL = -2.0;
@@ -107,44 +108,5 @@ public class MandelbrotCalculator extends JComponent{
             }
         }
         return mandelbrotData;
-    }
-    
-    public static void main(String[] args){
-        new MandelbrotCalculator();
-    }
-    
-    public MandelbrotCalculator() {
-        // TODO Auto-generated constructor stub
-        bi = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
-        
-        JFrame frame = new JFrame("Mandelbort Set");
-        frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
-        frame.setResizable(true);
-        frame.getContentPane().add(this);
-        frame.pack();
-        frame.setVisible(true);
-        
-    }
-    
-    public void render(){
-        MandelbrotCalculator mc = new MandelbrotCalculator();
-        int[][] data = mc.calcMandelbrotSet(20, 25, INITIAL_MIN_REAL, INITIAL_MAX_REAL, INITIAL_MIN_IMAGINARY, INITIAL_MAX_IMAGINARY, INITIAL_MAX_ITERATIONS, DEFAULT_RADIUS_SQUARED);
-        for(int x = 0; x < WIDTH; x++){
-            for(int y = 0; x < HEIGHT; y++){
-                
-            }
-        }
-    }
-    
-    @Override
-    public void addNotify() {
-        // TODO Auto-generated method stub
-        setPreferredSize(new Dimension(WIDTH, HEIGHT));
-    }
-    
-    @Override
-    public void paint(Graphics g) {
-        // TODO Auto-generated method stub
-        g.drawImage(bi, 0, 0, null);
     }
 }
