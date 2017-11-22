@@ -22,7 +22,7 @@ import javax.swing.JPanel;
  * @author jonl
  *
  */
-public class MandelbrotCalculator extends JPanel{
+public class MandelbrotCalculator {
 
     // Initial parameter values
     protected static final double INITIAL_MIN_REAL = -2.0;
@@ -30,13 +30,12 @@ public class MandelbrotCalculator extends JPanel{
     protected static final double INITIAL_MIN_IMAGINARY = -1.25;
     protected static final double INITIAL_MAX_IMAGINARY = 1.25;
     protected static final int INITIAL_MAX_ITERATIONS = 50;
-    protected static final int WIDTH = 800;
-    protected static final int HEIGHT = 600;
+    protected static final int WIDTH = 1000;
+    protected static final int HEIGHT = 1000;
 
     // Default parameter values
     protected static final double DEFAULT_RADIUS_SQUARED = 4.0;
 
-    private BufferedImage bi;
 
 
     /**

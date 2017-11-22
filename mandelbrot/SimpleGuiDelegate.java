@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -15,7 +17,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -36,7 +37,7 @@ import javax.swing.SwingUtilities;
  * @author jonl
  *
  */
-public class SimpleGuiDelegate implements Observer {
+public class SimpleGuiDelegate implements Observer, MouseListener {
 
     private static final int FRAME_HEIGHT = 1000;
     private static final int FRAME_WIDTH = 1000;
@@ -47,8 +48,9 @@ public class SimpleGuiDelegate implements Observer {
     
     private JToolBar toolbar;
     private JTextField inputField;
-    private JRadioButton button1;
-    private JButton button2;
+    private JButton undo;
+    private JButton redo;
+    private JButton reset;
     private JScrollPane outputPane;
     private JTextArea outputField;
     private JMenuBar menu;
@@ -56,6 +58,10 @@ public class SimpleGuiDelegate implements Observer {
     private SimpleModel model;
     private Panel panel;
     
+    private int mousePx;
+    private int mousePy;
+    private int mouseRx;
+    private int mouseRy;
 
     /**
      * Instantiate a new SimpleGuiDelegate object
@@ -85,18 +91,28 @@ public class SimpleGuiDelegate implements Observer {
      * Listeners are created for the buttons and text field which translate user events to model object method calls (controller aspect of the delegate) 
      */
     private void setupToolbar(){
-        button1 = new JRadioButton("Button 1");
-        button1.addActionListener(new ActionListener(){     // to translate event for this button into appropriate model method call
+        undo = new JButton("Undo");
+        undo.addActionListener(new ActionListener(){     // to translate event for this button into appropriate model method call
             public void actionPerformed(ActionEvent e){
                 // should  call method in model class if you want it to affect model
-                JOptionPane.showMessageDialog(mainFrame, "Ooops, Button 1 not linked to model!");
+                JOptionPane.showMessageDialog(mainFrame, "Ooops, Undo button not linked to model!");
             }
         });
-        button2 = new JButton("Button 2");
-        button2.addActionListener(new ActionListener(){
+        redo = new JButton("Redo");
+        redo.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 // should  call method in model class if you want it to affect model
-                JOptionPane.showMessageDialog(mainFrame, "Ooops, Button 2 not linked to model!");
+                JOptionPane.showMessageDialog(mainFrame, "Ooops, Redo button not linked to model!");
+            }
+        });
+        
+        reset = new JButton("Reset");
+        reset.addActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO Auto-generated method stub
+                JOptionPane.showMessageDialog(mainFrame, "Ooops, Reset button not linked to model!");
             }
         });
 
@@ -124,8 +140,9 @@ public class SimpleGuiDelegate implements Observer {
         });
 
         // add buttons, label, and textfield to the toolbar
-        toolbar.add(button1);
-        toolbar.add(button2);
+        toolbar.add(undo);
+        toolbar.add(redo);
+        toolbar.add(reset);
         toolbar.add(label);
         toolbar.add(inputField);
         toolbar.add(add_button);
@@ -171,10 +188,12 @@ public class SimpleGuiDelegate implements Observer {
         setupToolbar();
         
         panel = new Panel(model);
+        mainFrame.setTitle("Mandelbort Set Display");
         mainFrame.add(panel, BorderLayout.CENTER);
         mainFrame.setSize (FRAME_WIDTH, FRAME_HEIGHT);
         mainFrame.setVisible(true);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrame.addMouseListener(this);
     }   
     
     /**
@@ -203,6 +222,73 @@ public class SimpleGuiDelegate implements Observer {
                 panel.repaint();
             }
         });
+    }
+
+
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
+
+
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        // TODO Auto-generated method stub
+        System.out.println("Mouse pressed at " + e.getX() + ", " + e.getY());
+        mousePx = e.getX();
+        mousePy = e.getY();
+    }
+
+
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        // TODO Auto-generated method stub
+        System.out.println("Mouse released at " + e.getX() + ", " + e.getY());
+        mouseRx = e.getX();
+        mouseRy = e.getY();
+        getNewLocation(mousePx, mousePy, mouseRx, mouseRy);
+        
+    }
+
+
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
+
+
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    public void getNewLocation(int px, int py, int rx, int ry){
+        System.out.println("Repaint from [" + px + ", " + py + "] to [" + rx + ", " + ry + "]");
+        double originMinR = model.getMinReal();
+        double originMaxR = model.getMaxReal();
+        double originMinI = model.getMinImaginary();
+        double originMaxI = model.getMaxImaginary();
+        
+        double originR = originMaxR - originMinR;
+        double originI = originMaxI - originMinI;
+        
+        double newMinR = originMinR + ((double)px / model.getXResolution() * originR);
+        double newMaxR = originMaxR - ((double)rx / model.getXResolution() * originR);
+        double newMinI = originMinI + ((double)py / model.getYResolution() * originI);
+        double newMaxI = originMaxI - ((double)ry / model.getYResolution() * originI);
+        
+        model.setNewData(newMinR, newMaxR, newMinI, newMaxI);
+        
+        new SimpleGuiDelegate(model);
+        
     }
     
 }

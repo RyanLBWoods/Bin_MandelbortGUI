@@ -43,6 +43,15 @@ public class SimpleModel extends Observable {
         this.mcdata = mc.calcMandelbrotSet(xR, yR, minR, maxR, minImg, maxImg, maxIterations, radiusSquared);
     }
     
+    public void setNewData(double newMinR, double newMaxR, double newMinI, double newMaxI){
+        this.minR = newMinR;
+        this.maxR = newMaxR;
+        this.minImg = newMinI;
+        this.maxImg = newMaxI;
+        this.mc = new MandelbrotCalculator();
+        this.mcdata = mc.calcMandelbrotSet(xR, yR, minR, maxR, minImg, maxImg, maxIterations, radiusSquared);
+    }
+    
     public int[][] getMandelbrot_data() {
         return mcdata;
     }
