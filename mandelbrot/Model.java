@@ -1,5 +1,6 @@
 package mandelbrot;
 
+import java.awt.Color;
 import java.util.Observable;
 
 /**
@@ -24,6 +25,8 @@ public class Model extends Observable {
     
     private int xR, yR, maxIterations;
     private double minR, maxR, minImg, maxImg, radiusSquared;
+    
+    private Color color;
 
     /**
      * Constructs a new SimpleModel instance.
@@ -41,6 +44,7 @@ public class Model extends Observable {
         
         this.mc = new MandelbrotCalculator();
         this.mcdata = mc.calcMandelbrotSet(xR, yR, minR, maxR, minImg, maxImg, maxIterations, radiusSquared);
+        this.color = Color.WHITE;
     }
     
     public void setNewData(double newMinR, double newMaxR, double newMinI, double newMaxI){
@@ -116,9 +120,15 @@ public class Model extends Observable {
         this.mcdata = mc.calcMandelbrotSet(xR, yR, minR, maxR, minImg, maxImg, maxIterations, radiusSquared);
     }
     
-    public void update(){
-        setChanged();
-        notifyObservers();
+    public Color getColor(){
+        return color;
+    }
+
+    public void setColor(Color color) {
+        // TODO Auto-generated method stub
+        this.color = color;
+//        this.mc = new MandelbrotCalculator();
+        
     }
     
 }

@@ -24,14 +24,21 @@ public class DrawPanel extends JPanel{
         int[][] mdata = model.getMandelbrot_data();
         int maxIt = model.getMaxIterations();
         for(int x = 0; x < mdata.length; x++){
-            for(int y = 0; y < mdata.length; y++){
+            for(int y = 0; y < mdata[x].length; y++){
                 if(mdata[x][y] < maxIt){
-                    g.setColor(new Color(255, 255, 255));
-                    g.drawLine(y, x, y, x);
+                    float current = (float) mdata[x][y] / model.getMaxIterations();
+                    if(model.getColor().equals(Color.BLUE)){
+                        g.setColor(new Color(0, 0, current));
+                    } else if (model.getColor().equals(Color.RED)){
+                        g.setColor(new Color(current, 0, 0));
+                    } else {
+                        g.setColor(new Color(255, 255, 255));
+                    }
+                    
                 } else {
                     g.setColor(new Color(0, 0, 0));
-                    g.drawLine(y, x, y, x);
                 }
+                g.drawLine(y, x, y, x);
             }
         }
     }

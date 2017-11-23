@@ -56,6 +56,8 @@ public class GuiDelegate implements Observer {
     private JButton undo;
     private JButton redo;
     private JButton reset;
+    private JButton blue;
+    private JButton red;
     private JTextArea outputField;
     private JMenuBar menu;
     
@@ -149,6 +151,32 @@ public class GuiDelegate implements Observer {
                 updatePanel();
             }
         });
+        
+        blue = new JButton("Blue");
+        blue.addActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO Auto-generated method stub
+                record.addUndo(model);
+                model = new Model();
+                model.setColor(Color.BLUE);
+                updatePanel();
+            }
+        });
+        
+        red = new JButton("Red");
+        red.addActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO Auto-generated method stub
+                record.addUndo(model);
+                model = new Model();
+                model.setColor(Color.RED);
+                updatePanel();
+            }
+        });
 
         JLabel label = new JLabel("Iterations: ");
         
@@ -170,8 +198,6 @@ public class GuiDelegate implements Observer {
         JButton add_button = new JButton("Apply");       // to translate event for this button into appropriate model method call
         add_button.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
-//                model.addText(inputField.getText());        // same as when user presses carriage return key, tell model to add text entered by user
-//                inputField.setText("");                     // and clear the input box in the GUI view
                 record.addUndo(model);
                 model = new Model();
                 model.changeIteration(Integer.valueOf(inputField.getText()));
@@ -180,6 +206,8 @@ public class GuiDelegate implements Observer {
         });
 
         // add buttons, label, and textfield to the toolbar
+        toolbar.add(blue);
+        toolbar.add(red);
         toolbar.add(undo);
         toolbar.add(redo);
         toolbar.add(reset);
@@ -364,8 +392,10 @@ public class GuiDelegate implements Observer {
         double newMaxI = originMinI + ( ry / model.getYResolution() * originI);
         
         record.addUndo(model);
+        Color currentColor = model.getColor();
         model = new Model();
         model.setNewData(newMinR, newMaxR, newMinI, newMaxI);
+        model.setColor(currentColor);
         updatePanel();
         
     }
