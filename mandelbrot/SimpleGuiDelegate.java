@@ -1,12 +1,17 @@
 package mandelbrot;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -37,7 +42,7 @@ import javax.swing.SwingUtilities;
  * @author jonl
  *
  */
-public class SimpleGuiDelegate implements Observer, MouseListener {
+public class SimpleGuiDelegate implements Observer {
 
     private static final int FRAME_HEIGHT = 1000;
     private static final int FRAME_WIDTH = 1000;
@@ -56,7 +61,10 @@ public class SimpleGuiDelegate implements Observer, MouseListener {
     private JMenuBar menu;
     
     private SimpleModel model;
-    private Panel panel;
+    private DrawPanel panel;
+    
+    private Point begin;
+    private Rectangle rect;
     
     private int mousePx;
     private int mousePy;
@@ -112,7 +120,8 @@ public class SimpleGuiDelegate implements Observer, MouseListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // TODO Auto-generated method stub
-                JOptionPane.showMessageDialog(mainFrame, "Ooops, Reset button not linked to model!");
+                model.reset();
+                panel.repaint();
             }
         });
 
@@ -185,15 +194,99 @@ public class SimpleGuiDelegate implements Observer, MouseListener {
      */
     private void setupComponents(){
         setupMenu();
-//        setupToolbar();
+        setupToolbar();
         
-        panel = new Panel(model);
+        panel = new DrawPanel(model);
+        panel.addMouseListener(new MouseListener() {
+            
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+                Graphics2D g2 = (Graphics2D) panel.getGraphics();
+                g2.setXORMode(Color.WHITE);
+                g2.draw(rect);
+                g2.setPaintMode();
+                g2.dispose();
+                begin = null;
+                rect = null;
+                
+                System.out.println("Mouse released at " + e.getX() + ", " + e.getY());
+                mouseRx = e.getX();
+                mouseRy = e.getY();
+                
+                if(mousePx > mouseRx){
+                    int temp = mousePx;
+                    mousePx = mouseRx;
+                    mouseRx = temp;
+                }
+                
+                if(mousePy > mouseRy){
+                    int temp = mousePy;
+                    mousePy = mouseRy;
+                    mouseRy = temp;
+                }
+                getNewLocation(mousePx, mousePy, mouseRx, mouseRy);
+            }
+            
+            @Override
+            public void mousePressed(MouseEvent e) {
+                // TODO Auto-generated method stub
+                System.out.println("Mouse pressed at " + e.getX() + ", " + e.getY());
+                mousePx = e.getX();
+                mousePy = e.getY();
+                begin = e.getPoint();
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+        });
+        
+        panel.addMouseMotionListener(new MouseMotionListener() {
+            
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                // TODO Auto-generated method stub
+                Graphics2D g2 = (Graphics2D) panel.getGraphics();
+                
+                g2.setXORMode(Color.WHITE);
+                
+                if(rect != null){
+                    g2.draw(rect);
+                }
+                
+                rect = new Rectangle((int)Math.min(begin.getX(), e.getX()), (int)Math.min(begin.getY(), e.getY()), (int)Math.abs(begin.getX() - e.getX()), (int)Math.abs(begin.getY() - e.getY()));
+                g2.draw(rect);
+                g2.setPaintMode();
+                g2.dispose();
+            }
+        });
         mainFrame.setTitle("Mandelbort Set Display");
         mainFrame.add(panel, BorderLayout.CENTER);
         mainFrame.setSize (FRAME_WIDTH, FRAME_HEIGHT);
         mainFrame.setVisible(true);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.addMouseListener(this);
     }   
     
     /**
@@ -223,52 +316,6 @@ public class SimpleGuiDelegate implements Observer, MouseListener {
             }
         });
     }
-
-
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        // TODO Auto-generated method stub
-        
-    }
-
-
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-        // TODO Auto-generated method stub
-        System.out.println("Mouse pressed at " + e.getX() + ", " + e.getY());
-        mousePx = e.getX();
-        mousePy = e.getY() - 90;
-    }
-
-
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        // TODO Auto-generated method stub
-        System.out.println("Mouse released at " + e.getX() + ", " + e.getY());
-        mouseRx = e.getX();
-        mouseRy = e.getY() - 90;
-        getNewLocation(mousePx, mousePy, mouseRx, mouseRy);
-        
-    }
-
-
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        // TODO Auto-generated method stub
-        
-    }
-
-
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        // TODO Auto-generated method stub
-        
-    }
     
     public void getNewLocation(int px, int py, int rx, int ry){
         System.out.println("Repaint from [" + px + ", " + py + "] to [" + rx + ", " + ry + "]");
@@ -280,17 +327,16 @@ public class SimpleGuiDelegate implements Observer, MouseListener {
         double originR = originMaxR - originMinR;
         double originI = originMaxI - originMinI;
         
-        double newMinR = originMinR + ((double)px / model.getXResolution() * originR);
-        double newMaxR = originMaxR - ((double)(model.getXResolution() - rx) / model.getXResolution() * originR);
-        double newMinI = originMinI + ((double)(model.getYResolution() - ry) / model.getYResolution() * originI);
-        double newMaxI = originMaxI - ((double)py / model.getYResolution() * originI);
+        double newMinR = originMinR + ((double) px / model.getXResolution() * originR);
+        double newMaxR = originMinR + ((double) rx / model.getXResolution() * originR);
+        double newMinI = originMinI + ((double) py / model.getYResolution() * originI);
+        double newMaxI = originMinI + ((double) ry / model.getYResolution() * originI);
         
         System.out.println(newMinR + ", " + newMaxR + "==");
         System.out.println(newMinI + ", " + newMaxI);
         
         model.setNewData(newMinR, newMaxR, newMinI, newMaxI);
         panel.repaint();
-//        new SimpleGuiDelegate(model);
         
     }
     

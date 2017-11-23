@@ -48,6 +48,9 @@ public class SimpleModel extends Observable {
         this.maxR = newMaxR;
         this.minImg = newMinI;
         this.maxImg = newMaxI;
+        
+        System.out.println(minR + ", " + maxR + "-----");
+        System.out.println(minImg + ", " + maxImg + "....");
         this.mc = new MandelbrotCalculator();
         this.mcdata = mc.calcMandelbrotSet(xR, yR, minR, maxR, minImg, maxImg, maxIterations, radiusSquared);
     }
@@ -86,6 +89,19 @@ public class SimpleModel extends Observable {
 
     public double getRadiusSquared() {
         return radiusSquared;
+    }
+
+    public void reset() {
+        // TODO Auto-generated method stub
+        this.minR = MandelbrotCalculator.INITIAL_MIN_REAL;
+        this.maxR = MandelbrotCalculator.INITIAL_MAX_REAL;
+        this.minImg = MandelbrotCalculator.INITIAL_MIN_IMAGINARY;
+        this.maxImg = MandelbrotCalculator.INITIAL_MAX_IMAGINARY;
+        this.maxIterations = MandelbrotCalculator.INITIAL_MAX_ITERATIONS;
+        this.radiusSquared = MandelbrotCalculator.DEFAULT_RADIUS_SQUARED;
+        
+        this.mc = new MandelbrotCalculator();
+        this.mcdata = mc.calcMandelbrotSet(xR, yR, minR, maxR, minImg, maxImg, maxIterations, radiusSquared);
     }
     
 }

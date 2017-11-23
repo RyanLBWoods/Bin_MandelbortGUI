@@ -5,11 +5,11 @@ import java.awt.Graphics;
 
 import javax.swing.JPanel;
 
-public class Panel extends JPanel{
+public class DrawPanel extends JPanel{
 
     SimpleModel model;
     
-    public Panel(SimpleModel model){
+    public DrawPanel(SimpleModel model){
         this.model = model;
     }
     
