@@ -1,13 +1,5 @@
 package mandelbrot;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
 /**
  * The MandelbrotCalculator class contains methods which establish the Mandelbrot set.
  * The calcMandelbrotSet method below iterates over X,Y positions and establishes for specified parameter values a 2-D array containing

@@ -13,8 +13,8 @@ public class GUIDisplay extends JPanel {
 
     public static void main(String[] args) {
         // TODO Auto-generated method stub
-        SimpleModel model = new SimpleModel();
-        SimpleGuiDelegate gui = new SimpleGuiDelegate(model);
+        Model model = new Model();
+        GuiDelegate gui = new GuiDelegate(model);
     }
 
 }

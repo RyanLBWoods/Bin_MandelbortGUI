@@ -7,9 +7,13 @@ import javax.swing.JPanel;
 
 public class DrawPanel extends JPanel{
 
-    SimpleModel model;
+    Model model;
     
-    public DrawPanel(SimpleModel model){
+    public DrawPanel(Model model){
+        this.model = model;
+    }
+    
+    public void changeModel(Model model){
         this.model = model;
     }
     

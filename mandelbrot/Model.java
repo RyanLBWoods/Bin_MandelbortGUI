@@ -14,7 +14,7 @@ import java.util.Observable;
  * @author jonl
  *
  */
-public class SimpleModel extends Observable {
+public class Model extends Observable {
 
     private static final int DEFAULT_WIDTH = 1000;
     private static final int DEFAULT_HEIGHT = 1000;
@@ -29,7 +29,7 @@ public class SimpleModel extends Observable {
      * Constructs a new SimpleModel instance.
      * Initialises the StringBuffer.
      */
-    public SimpleModel(){
+    public Model(){
         this.xR = DEFAULT_WIDTH;
         this.yR = DEFAULT_HEIGHT;
         this.minR = MandelbrotCalculator.INITIAL_MIN_REAL;
@@ -53,6 +53,16 @@ public class SimpleModel extends Observable {
         System.out.println(minImg + ", " + maxImg + "....");
         this.mc = new MandelbrotCalculator();
         this.mcdata = mc.calcMandelbrotSet(xR, yR, minR, maxR, minImg, maxImg, maxIterations, radiusSquared);
+    }
+    
+    public void changeIteration(int newIterations){
+        this.maxIterations = newIterations;
+        this.mc = new MandelbrotCalculator();
+        this.mcdata = mc.calcMandelbrotSet(xR, yR, minR, maxR, minImg, maxImg, maxIterations, radiusSquared);
+    }
+    
+    public void getSetting(){
+        
     }
     
     public int[][] getMandelbrot_data() {

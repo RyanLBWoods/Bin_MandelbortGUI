@@ -14,6 +14,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Stack;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -42,7 +43,7 @@ import javax.swing.SwingUtilities;
  * @author jonl
  *
  */
-public class SimpleGuiDelegate implements Observer {
+public class GuiDelegate implements Observer {
 
     private static final int FRAME_HEIGHT = 1000;
     private static final int FRAME_WIDTH = 1000;
@@ -60,30 +61,34 @@ public class SimpleGuiDelegate implements Observer {
     private JTextArea outputField;
     private JMenuBar menu;
     
-    private SimpleModel model;
+    private Model model;
     private DrawPanel panel;
+    private Record record;
     
     private Point begin;
     private Rectangle rect;
     
-    private int mousePx;
-    private int mousePy;
-    private int mouseRx;
-    private int mouseRy;
+    private double mousePx;
+    private double mousePy;
+    private double mouseRx;
+    private double mouseRy;
 
     /**
      * Instantiate a new SimpleGuiDelegate object
      * @param model the Model to observe, render, and update according to user events
      */
-    public SimpleGuiDelegate(SimpleModel model){
+    public GuiDelegate(Model model){
         this.model = model;
         this.mainFrame = new JFrame();  // set up the main frame for this GUI
         menu = new JMenuBar();
         toolbar = new JToolBar();
         inputField = new JTextField(TEXT_WIDTH);
+        inputField.setText("50");
         outputField = new JTextArea(TEXT_WIDTH, TEXT_HEIGHT);
         outputField.setEditable(false);
         outputPane = new JScrollPane(outputField);
+        
+        this.record = new Record();
         setupComponents();
         
         // add the delegate UI component as an observer of the model
@@ -103,14 +108,33 @@ public class SimpleGuiDelegate implements Observer {
         undo.addActionListener(new ActionListener(){     // to translate event for this button into appropriate model method call
             public void actionPerformed(ActionEvent e){
                 // should  call method in model class if you want it to affect model
-                JOptionPane.showMessageDialog(mainFrame, "Ooops, Undo button not linked to model!");
+                
+                if(record.undo.isEmpty()){
+                    JOptionPane.showMessageDialog(mainFrame, "Cannot Undo");
+                } else {
+                    record.addRedo(model);
+                    model = new Model();
+                    model = record.undo.pop();
+                    panel.changeModel(model);
+                    panel.repaint();
+                }
+                
             }
         });
         redo = new JButton("Redo");
         redo.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 // should  call method in model class if you want it to affect model
-                JOptionPane.showMessageDialog(mainFrame, "Ooops, Redo button not linked to model!");
+                if(record.redo.isEmpty()){
+                    JOptionPane.showMessageDialog(mainFrame, "Cannot Redo");
+                } else {
+                    record.addUndo(model);
+                    model = new Model();
+                    model = record.redo.pop();
+                    panel.changeModel(model);
+                    panel.repaint();
+                }
+                
             }
         });
         
@@ -120,12 +144,17 @@ public class SimpleGuiDelegate implements Observer {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // TODO Auto-generated method stub
+                inputField.setText("50");
+                record.undo = new Stack<>();
+                record.redo = new Stack<>();
+                model = new Model();
                 model.reset();
+                panel.changeModel(model);
                 panel.repaint();
             }
         });
 
-        JLabel label = new JLabel("Enter Text: ");
+        JLabel label = new JLabel("Iterations: ");
         
         inputField.addKeyListener(new KeyListener(){        // to translate key event for the text filed into appropriate model method call
             public void keyPressed(KeyEvent e) {
@@ -140,11 +169,17 @@ public class SimpleGuiDelegate implements Observer {
             }
         });
         
-        JButton add_button = new JButton("Add Text");       // to translate event for this button into appropriate model method call
+        JButton add_button = new JButton("Apply");       // to translate event for this button into appropriate model method call
         add_button.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
 //                model.addText(inputField.getText());        // same as when user presses carriage return key, tell model to add text entered by user
 //                inputField.setText("");                     // and clear the input box in the GUI view
+                record.addUndo(model);
+                model = new Model();
+                model.changeIteration(Integer.valueOf(inputField.getText()));
+                panel.changeModel(model);
+//                record.addDone(model);
+                panel.repaint();
             }
         });
 
@@ -212,17 +247,17 @@ public class SimpleGuiDelegate implements Observer {
                 rect = null;
                 
                 System.out.println("Mouse released at " + e.getX() + ", " + e.getY());
-                mouseRx = e.getX();
-                mouseRy = e.getY();
+                mouseRx = (double) e.getX();
+                mouseRy = (double) e.getY();
                 
                 if(mousePx > mouseRx){
-                    int temp = mousePx;
+                    double temp = mousePx;
                     mousePx = mouseRx;
                     mouseRx = temp;
                 }
                 
                 if(mousePy > mouseRy){
-                    int temp = mousePy;
+                    double temp = mousePy;
                     mousePy = mouseRy;
                     mouseRy = temp;
                 }
@@ -233,8 +268,8 @@ public class SimpleGuiDelegate implements Observer {
             public void mousePressed(MouseEvent e) {
                 // TODO Auto-generated method stub
                 System.out.println("Mouse pressed at " + e.getX() + ", " + e.getY());
-                mousePx = e.getX();
-                mousePy = e.getY();
+                mousePx = (double) e.getX();
+                mousePy = (double) e.getY();
                 begin = e.getPoint();
             }
             
@@ -317,7 +352,7 @@ public class SimpleGuiDelegate implements Observer {
         });
     }
     
-    public void getNewLocation(int px, int py, int rx, int ry){
+    public void getNewLocation(double px, double py, double rx, double ry){
         System.out.println("Repaint from [" + px + ", " + py + "] to [" + rx + ", " + ry + "]");
         double originMinR = model.getMinReal();
         double originMaxR = model.getMaxReal();
@@ -327,15 +362,17 @@ public class SimpleGuiDelegate implements Observer {
         double originR = originMaxR - originMinR;
         double originI = originMaxI - originMinI;
         
-        double newMinR = originMinR + ((double) px / model.getXResolution() * originR);
-        double newMaxR = originMinR + ((double) rx / model.getXResolution() * originR);
-        double newMinI = originMinI + ((double) py / model.getYResolution() * originI);
-        double newMaxI = originMinI + ((double) ry / model.getYResolution() * originI);
+        double newMinR = originMinR + ( px / model.getXResolution() * originR);
+        double newMaxR = originMinR + ( rx / model.getXResolution() * originR);
+        double newMinI = originMinI + ( py / model.getYResolution() * originI);
+        double newMaxI = originMinI + ( ry / model.getYResolution() * originI);
         
         System.out.println(newMinR + ", " + newMaxR + "==");
         System.out.println(newMinI + ", " + newMaxI);
         
+//        model = new Model();
         model.setNewData(newMinR, newMaxR, newMinI, newMaxI);
+//        record.addDone(model);
         panel.repaint();
         
     }
