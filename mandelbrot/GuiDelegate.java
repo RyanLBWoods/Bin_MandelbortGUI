@@ -159,8 +159,11 @@ public class GuiDelegate implements Observer {
         inputField.addKeyListener(new KeyListener(){        // to translate key event for the text filed into appropriate model method call
             public void keyPressed(KeyEvent e) {
                 if(e.getKeyCode() == KeyEvent.VK_ENTER){
-//                    model.addText(inputField.getText());    // tell model to add text entered by user
-//                    inputField.setText("");                 // clear the input box in the GUI view
+                    record.addUndo(model);
+                    model = new Model();
+                    model.changeIteration(Integer.valueOf(inputField.getText()));
+                    panel.changeModel(model);
+                    panel.repaint();
                 }
             }
             public void keyReleased(KeyEvent e) {
