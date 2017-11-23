@@ -23,7 +23,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
@@ -57,7 +56,6 @@ public class GuiDelegate implements Observer {
     private JButton undo;
     private JButton redo;
     private JButton reset;
-    private JScrollPane outputPane;
     private JTextArea outputField;
     private JMenuBar menu;
     
@@ -86,7 +84,6 @@ public class GuiDelegate implements Observer {
         inputField.setText("50");
         outputField = new JTextArea(TEXT_WIDTH, TEXT_HEIGHT);
         outputField.setEditable(false);
-        outputPane = new JScrollPane(outputField);
         
         this.record = new Record();
         setupComponents();
@@ -352,7 +349,7 @@ public class GuiDelegate implements Observer {
     }
     
     public void getNewLocation(double px, double py, double rx, double ry){
-        System.out.println("Repaint from [" + px + ", " + py + "] to [" + rx + ", " + ry + "]");
+        System.out.println("Zoom from [" + px + ", " + py + "] to [" + rx + ", " + ry + "]");
         double originMinR = model.getMinReal();
         double originMaxR = model.getMaxReal();
         double originMinI = model.getMinImaginary();
@@ -365,9 +362,6 @@ public class GuiDelegate implements Observer {
         double newMaxR = originMinR + ( rx / model.getXResolution() * originR);
         double newMinI = originMinI + ( py / model.getYResolution() * originI);
         double newMaxI = originMinI + ( ry / model.getYResolution() * originI);
-        
-        System.out.println(newMinR + ", " + newMaxR + "==");
-        System.out.println(newMinI + ", " + newMaxI);
         
         record.addUndo(model);
         model = new Model();

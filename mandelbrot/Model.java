@@ -49,8 +49,10 @@ public class Model extends Observable {
         this.minImg = newMinI;
         this.maxImg = newMaxI;
         
-        System.out.println(minR + ", " + maxR + "-----");
-        System.out.println(minImg + ", " + maxImg + "....");
+        System.out.println("New MinReal: " + minR);
+        System.out.println("New MaxReal: " + maxR);
+        System.out.println("New MinImaginary: " + minImg);
+        System.out.println("New MaxImaginary: " + maxImg);
         this.mc = new MandelbrotCalculator();
         this.mcdata = mc.calcMandelbrotSet(xR, yR, minR, maxR, minImg, maxImg, maxIterations, radiusSquared);
     }
