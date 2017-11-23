@@ -373,9 +373,10 @@ public class GuiDelegate implements Observer {
         System.out.println(newMinR + ", " + newMaxR + "==");
         System.out.println(newMinI + ", " + newMaxI);
         
-//        model = new Model();
+        record.addUndo(model);
+        model = new Model();
         model.setNewData(newMinR, newMaxR, newMinI, newMaxI);
-//        record.addDone(model);
+        panel.changeModel(model);
         panel.repaint();
         
     }
