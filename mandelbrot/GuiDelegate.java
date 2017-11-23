@@ -115,8 +115,8 @@ public class GuiDelegate implements Observer {
                     record.addRedo(model);
                     model = new Model();
                     model = record.undo.pop();
-                    panel.changeModel(model);
-                    panel.repaint();
+                    inputField.setText(String.valueOf(model.getMaxIterations()));
+                    updatePanel();
                 }
                 
             }
@@ -131,8 +131,8 @@ public class GuiDelegate implements Observer {
                     record.addUndo(model);
                     model = new Model();
                     model = record.redo.pop();
-                    panel.changeModel(model);
-                    panel.repaint();
+                    inputField.setText(String.valueOf(model.getMaxIterations()));
+                    updatePanel();
                 }
                 
             }
@@ -144,13 +144,12 @@ public class GuiDelegate implements Observer {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // TODO Auto-generated method stub
-                inputField.setText("50");
                 record.undo = new Stack<>();
                 record.redo = new Stack<>();
                 model = new Model();
                 model.reset();
-                panel.changeModel(model);
-                panel.repaint();
+                inputField.setText(String.valueOf(model.getMaxIterations()));
+                updatePanel();
             }
         });
 
@@ -162,8 +161,7 @@ public class GuiDelegate implements Observer {
                     record.addUndo(model);
                     model = new Model();
                     model.changeIteration(Integer.valueOf(inputField.getText()));
-                    panel.changeModel(model);
-                    panel.repaint();
+                    updatePanel();
                 }
             }
             public void keyReleased(KeyEvent e) {
@@ -180,9 +178,7 @@ public class GuiDelegate implements Observer {
                 record.addUndo(model);
                 model = new Model();
                 model.changeIteration(Integer.valueOf(inputField.getText()));
-                panel.changeModel(model);
-//                record.addDone(model);
-                panel.repaint();
+                updatePanel();
             }
         });
 
@@ -376,9 +372,13 @@ public class GuiDelegate implements Observer {
         record.addUndo(model);
         model = new Model();
         model.setNewData(newMinR, newMaxR, newMinI, newMaxI);
+        updatePanel();
+        
+    }
+    
+    public void updatePanel(){
         panel.changeModel(model);
         panel.repaint();
-        
     }
     
 }

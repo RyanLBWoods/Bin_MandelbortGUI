@@ -114,4 +114,9 @@ public class Model extends Observable {
         this.mcdata = mc.calcMandelbrotSet(xR, yR, minR, maxR, minImg, maxImg, maxIterations, radiusSquared);
     }
     
+    public void update(){
+        setChanged();
+        notifyObservers();
+    }
+    
 }
