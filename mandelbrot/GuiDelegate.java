@@ -425,12 +425,15 @@ public class GuiDelegate {
             @Override
             public void mouseClicked(MouseEvent e) {
                 // TODO Auto-generated method stub
-                
+                System.out.println(panel.getX());
+                System.out.println(panel.getY());
+                System.out.println(frame.getX());
+                System.out.println(frame.getY());
                 if(e.getButton() == MouseEvent.BUTTON3 && e.getClickCount() == 2){
                     try {
                         File jpg = new File("MandelbrotSet.jpg");
                         OutputStream os = new FileOutputStream(jpg);
-                        BufferedImage img = new Robot().createScreenCapture(new Rectangle(0, 110, panel.getWidth(), panel.getHeight()));
+                        BufferedImage img = new Robot().createScreenCapture(new Rectangle(frame.getX(), frame.getY() + 90, panel.getWidth(), panel.getHeight()));
                         ImageIO.write(img, "jpg", os);
                     } catch (AWTException e1) {
                         // TODO Auto-generated catch block
