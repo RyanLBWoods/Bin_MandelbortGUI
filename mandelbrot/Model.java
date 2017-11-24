@@ -1,38 +1,30 @@
 package mandelbrot;
 
 import java.awt.Color;
-import java.util.Observable;
 
 /**
- * A simple model class whose purpose is to store text entered by a user.
+ * Model class to operate with the Mandelbrot set.
  * 
- * The model's state is altered by user input when the delegate calls the addText()
- * method below. 
- * 
- * The model extends the Observable class and is observed by the Delegate class. This form
- * of loose coupling permits the Delegate (View) to be updated when the model has changed.
- * 
- * @author jonl
+ * @author 170008965
  *
  */
-public class Model extends Observable {
+public class Model {
 
     private static final int DEFAULT_WIDTH = 1000;
     private static final int DEFAULT_HEIGHT = 1000;
-    
+
     private MandelbrotCalculator mc;
     private int[][] mcdata;
-    
+
     private int xR, yR, maxIterations;
     private double minR, maxR, minImg, maxImg, radiusSquared;
-    
+
     private Color color;
 
     /**
-     * Constructs a new SimpleModel instance.
-     * Initialises the StringBuffer.
+     * Constructor.
      */
-    public Model(){
+    public Model() {
         this.xR = DEFAULT_WIDTH;
         this.yR = DEFAULT_HEIGHT;
         this.minR = MandelbrotCalculator.INITIAL_MIN_REAL;
@@ -41,18 +33,30 @@ public class Model extends Observable {
         this.maxImg = MandelbrotCalculator.INITIAL_MAX_IMAGINARY;
         this.maxIterations = MandelbrotCalculator.INITIAL_MAX_ITERATIONS;
         this.radiusSquared = MandelbrotCalculator.DEFAULT_RADIUS_SQUARED;
-        
+
         this.mc = new MandelbrotCalculator();
         this.mcdata = mc.calcMandelbrotSet(xR, yR, minR, maxR, minImg, maxImg, maxIterations, radiusSquared);
         this.color = Color.WHITE;
     }
-    
-    public void setNewData(double newMinR, double newMaxR, double newMinI, double newMaxI){
+
+    /**
+     * Method to set new values to attributes and re-calculate Mandelbrot set.
+     * 
+     * @param newMinR
+     *            New minimum Real value
+     * @param newMaxR
+     *            New maximum Real value
+     * @param newMinI
+     *            New minimum Imaginary value
+     * @param newMaxI
+     *            New maximum Imaginary value
+     */
+    public void setNewData(double newMinR, double newMaxR, double newMinI, double newMaxI) {
         this.minR = newMinR;
         this.maxR = newMaxR;
         this.minImg = newMinI;
         this.maxImg = newMaxI;
-        
+
         System.out.println("New MinReal: " + minR);
         System.out.println("New MaxReal: " + maxR);
         System.out.println("New MinImaginary: " + minImg);
@@ -60,17 +64,17 @@ public class Model extends Observable {
         this.mc = new MandelbrotCalculator();
         this.mcdata = mc.calcMandelbrotSet(xR, yR, minR, maxR, minImg, maxImg, maxIterations, radiusSquared);
     }
-    
-    public void changeIteration(int newIterations){
+
+    public void changeIteration(int newIterations) {
         this.maxIterations = newIterations;
         this.mc = new MandelbrotCalculator();
         this.mcdata = mc.calcMandelbrotSet(xR, yR, minR, maxR, minImg, maxImg, maxIterations, radiusSquared);
     }
-    
-    public void getSetting(){
-        
+
+    public void getSetting() {
+
     }
-    
+
     public int[][] getMandelbrot_data() {
         return mcdata;
     }
@@ -115,20 +119,18 @@ public class Model extends Observable {
         this.maxImg = MandelbrotCalculator.INITIAL_MAX_IMAGINARY;
         this.maxIterations = MandelbrotCalculator.INITIAL_MAX_ITERATIONS;
         this.radiusSquared = MandelbrotCalculator.DEFAULT_RADIUS_SQUARED;
-        
+
         this.mc = new MandelbrotCalculator();
         this.mcdata = mc.calcMandelbrotSet(xR, yR, minR, maxR, minImg, maxImg, maxIterations, radiusSquared);
     }
-    
-    public Color getColor(){
+
+    public Color getColor() {
         return color;
     }
 
     public void setColor(Color color) {
         // TODO Auto-generated method stub
         this.color = color;
-//        this.mc = new MandelbrotCalculator();
-        
     }
-    
+
 }

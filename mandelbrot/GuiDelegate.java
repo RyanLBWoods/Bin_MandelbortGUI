@@ -12,8 +12,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Stack;
 
 import javax.swing.JButton;
@@ -23,10 +21,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
-import javax.swing.SwingUtilities;
 
 
 /**
@@ -42,11 +38,10 @@ import javax.swing.SwingUtilities;
  * @author jonl
  *
  */
-public class GuiDelegate implements Observer {
+public class GuiDelegate {
 
     private static final int FRAME_HEIGHT = 1000;
     private static final int FRAME_WIDTH = 1000;
-    private static final int TEXT_HEIGHT = 10;
     private static final int TEXT_WIDTH = 10;
     
     private JFrame mainFrame;
@@ -56,9 +51,11 @@ public class GuiDelegate implements Observer {
     private JButton undo;
     private JButton redo;
     private JButton reset;
-    private JButton blue;
     private JButton red;
-    private JTextArea outputField;
+    private JButton green;
+    private JButton blue;
+    private JButton white;
+    private JButton apply;
     private JMenuBar menu;
     
     private Model model;
@@ -84,15 +81,9 @@ public class GuiDelegate implements Observer {
         toolbar = new JToolBar();
         inputField = new JTextField(TEXT_WIDTH);
         inputField.setText("50");
-        outputField = new JTextArea(TEXT_WIDTH, TEXT_HEIGHT);
-        outputField.setEditable(false);
         
         this.record = new Record();
         setupComponents();
-        
-        // add the delegate UI component as an observer of the model
-        // so as to detect changes in the model and update the GUI view accordingly
-        model.addObserver(this);
         
     }
 
@@ -152,6 +143,32 @@ public class GuiDelegate implements Observer {
             }
         });
         
+        red = new JButton("Red");
+        red.addActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO Auto-generated method stub
+                record.addUndo(model);
+                model = new Model();
+                model.setColor(Color.RED);
+                updatePanel();
+            }
+        });
+        
+        green = new JButton("Green");
+        green.addActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO Auto-generated method stub
+                record.addUndo(model);
+                model = new Model();
+                model.setColor(Color.GREEN);
+                updatePanel();
+            }
+        });
+        
         blue = new JButton("Blue");
         blue.addActionListener(new ActionListener() {
             
@@ -165,15 +182,15 @@ public class GuiDelegate implements Observer {
             }
         });
         
-        red = new JButton("Red");
-        red.addActionListener(new ActionListener() {
+        white = new JButton("White");
+        white.addActionListener(new ActionListener() {
             
             @Override
             public void actionPerformed(ActionEvent e) {
                 // TODO Auto-generated method stub
                 record.addUndo(model);
                 model = new Model();
-                model.setColor(Color.RED);
+                model.setColor(Color.WHITE);
                 updatePanel();
             }
         });
@@ -195,8 +212,8 @@ public class GuiDelegate implements Observer {
             }
         });
         
-        JButton add_button = new JButton("Apply");       // to translate event for this button into appropriate model method call
-        add_button.addActionListener(new ActionListener(){
+        apply = new JButton("Apply");       // to translate event for this button into appropriate model method call
+        apply.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 record.addUndo(model);
                 model = new Model();
@@ -206,14 +223,18 @@ public class GuiDelegate implements Observer {
         });
 
         // add buttons, label, and textfield to the toolbar
-        toolbar.add(blue);
         toolbar.add(red);
+        toolbar.add(green);
+        toolbar.add(blue);
+        toolbar.add(white);
+        toolbar.addSeparator();
         toolbar.add(undo);
         toolbar.add(redo);
         toolbar.add(reset);
+        toolbar.addSeparator();
         toolbar.add(label);
         toolbar.add(inputField);
-        toolbar.add(add_button);
+        toolbar.add(apply);
         // add toolbar to north of main frame
         mainFrame.add(toolbar, BorderLayout.NORTH);
     }
@@ -346,34 +367,6 @@ public class GuiDelegate implements Observer {
         mainFrame.setSize (FRAME_WIDTH, FRAME_HEIGHT);
         mainFrame.setVisible(true);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    }   
-    
-    /**
-     * This method contains code to update the GUI view when the model changes
-     * The method is called when the model changes (i.e. when the model executes setChanged() and notifyObservers())
-     * Any parameters passed to notifyObservers @see java.util.Observer#update(java.util.Observable, java.lang.Object)
-     * are passed to update. 
-     * The code in update should get hold of the model state it requires and update the relevant GUI components so that
-     * an updated view of the model is displayed on screen.
-     * For this simple example, the only state information we need from the model is what is in the model's text buffer and the
-     * only GUI view element we need to update is the text area used for output.
-     * 
-     * NOTE: In a more complex program, the model may hold information on a variety of objects, such as various shapes, their positions, etc.
-     * and the GUI view would then have to get hold of all that state info and produce a graphical representation of theses objects.
-     * As a result, the update method would have to get hold of various bits of model state and then
-     * call the relevant methods (defined in the GUI code) to render the objects.
-     * 
-     */
-    public void update(Observable o, Object arg) {
-
-        // Tell the SwingUtilities thread to update the GUI components.
-        // This is safer than executing outputField.setText(model.getText()) 
-        // in the caller's thread 
-        SwingUtilities.invokeLater(new Runnable(){
-            public void run(){
-                panel.repaint();
-            }
-        });
     }
     
     public void getNewLocation(double px, double py, double rx, double ry){
@@ -401,8 +394,8 @@ public class GuiDelegate implements Observer {
     }
     
     public void updatePanel(){
-        panel.changeModel(model);
+        panel.updateModel(model);
         panel.repaint();
     }
-    
+
 }
