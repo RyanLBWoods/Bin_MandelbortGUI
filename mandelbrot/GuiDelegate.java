@@ -12,11 +12,13 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.Stack;
 
 import javax.swing.JButton;
@@ -299,16 +301,19 @@ public class GuiDelegate {
                 fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
                 File dir = new File(System.getProperty("user.dir"));
                 fc.setCurrentDirectory(dir);
-                int returnVal = fc.showOpenDialog(fc);
+                int returnVal = fc.showOpenDialog(null);
                 if(returnVal == JFileChooser.APPROVE_OPTION){
                     File f = fc.getSelectedFile();
                     try {
-                        FileOutputStream fos = new FileOutputStream(f);
-                        ObjectOutputStream oos = new ObjectOutputStream(fos);
-                        Settings setting = new Settings(model);
-                        oos.writeObject(setting);
+//                        FileOutputStream fos = new FileOutputStream(f);
+                        OutputStream os = new FileOutputStream(f);
+                        BufferedOutputStream buf = new BufferedOutputStream(os);
+                        ObjectOutputStream oos = new ObjectOutputStream(buf);
+//                        Settings setting = new Settings(model);
+                        oos.writeObject(new Settings(model));
                         oos.close();
-                        oos.close();
+                        buf.close();
+                        os.close();
                     } catch (Exception e1) {
                         // TODO Auto-generated catch block
                         e1.printStackTrace();

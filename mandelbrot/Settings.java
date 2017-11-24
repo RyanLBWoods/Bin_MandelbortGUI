@@ -1,8 +1,9 @@
 package mandelbrot;
 
 import java.awt.Color;
+import java.io.Serializable;
 
-public class Settings {
+public class Settings implements Serializable{
 
     private int xR, yR, maxIterations;
     private double minR, maxR;
