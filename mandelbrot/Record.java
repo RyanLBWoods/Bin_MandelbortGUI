@@ -27,4 +27,10 @@ public class Record {
     public void addRedo(Model model) {
         this.redo.add(model);
     }
+
+    public void clear() {
+        // TODO Auto-generated method stub
+        this.undo.clear();
+        this.redo.clear();
+    }
 }

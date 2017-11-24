@@ -55,6 +55,8 @@ public class DrawPanel extends JPanel {
                         g.setColor(new Color(0, current, 0));
                     } else if (model.getColor().equals(Color.BLUE)) {
                         g.setColor(new Color(0, 0, current));
+                    } else if(model.getColor().equals(GUIDisplay.PURPLE)){
+                        g.setColor(new Color(current, 0, current));
                     } else {
                         g.setColor(new Color(255, 255, 255));
                     }

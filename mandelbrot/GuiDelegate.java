@@ -34,16 +34,9 @@ import javax.swing.JToolBar;
 
 
 /**
- * The SimpleGuiDelegate class whose purpose is to render relevant state information stored in the model and make changes to the model state based on user events. 
+ * Class to render relevant state information stored in the model and make changes to the model state based on user events. 
  * 
- * This class uses Swing to display the model state when the model changes. This is the view aspect of the delegate class. 
- * It also listens for user input events (in the listeners defined below), translates these to appropriate calls to methods
- * defined in the model class so as to make changes to the model. This is the controller aspect of the delegate class. 
- * The class implements Observer in order to permit it to be added as an observer of the model class. 
- * When the model calls notifyObservers() (after executing setChanged()) 
- * the update(...) method below is called in order to update the view of the model.
- * 
- * @author jonl
+ * @author 170008965
  *
  */
 public class GuiDelegate {
@@ -63,6 +56,7 @@ public class GuiDelegate {
     private JButton green;
     private JButton blue;
     private JButton white;
+    private JButton purple;
     private JButton apply;
     private JMenuBar menu;
     
@@ -79,7 +73,7 @@ public class GuiDelegate {
     private double mouseRy;
 
     /**
-     * Instantiate a new SimpleGuiDelegate object
+     * Instantiate GuiDelegate object
      * @param model the Model to observe, render, and update according to user events
      */
     public GuiDelegate(Model model){
@@ -158,8 +152,11 @@ public class GuiDelegate {
             public void actionPerformed(ActionEvent e) {
                 // TODO Auto-generated method stub
                 record.addUndo(model);
+                int currentIteration = model.getMaxIterations();
                 model = new Model();
+                model.changeIteration(currentIteration);
                 model.setColor(Color.RED);
+                inputField.setText(String.valueOf(model.getMaxIterations()));
                 updatePanel();
             }
         });
@@ -171,8 +168,11 @@ public class GuiDelegate {
             public void actionPerformed(ActionEvent e) {
                 // TODO Auto-generated method stub
                 record.addUndo(model);
+                int currentIteration = model.getMaxIterations();
                 model = new Model();
+                model.changeIteration(currentIteration);
                 model.setColor(Color.GREEN);
+                inputField.setText(String.valueOf(model.getMaxIterations()));
                 updatePanel();
             }
         });
@@ -184,8 +184,11 @@ public class GuiDelegate {
             public void actionPerformed(ActionEvent e) {
                 // TODO Auto-generated method stub
                 record.addUndo(model);
+                int currentIteration = model.getMaxIterations();
                 model = new Model();
+                model.changeIteration(currentIteration);
                 model.setColor(Color.BLUE);
+                inputField.setText(String.valueOf(model.getMaxIterations()));
                 updatePanel();
             }
         });
@@ -197,12 +200,31 @@ public class GuiDelegate {
             public void actionPerformed(ActionEvent e) {
                 // TODO Auto-generated method stub
                 record.addUndo(model);
+                int currentIteration = model.getMaxIterations();
                 model = new Model();
+                model.changeIteration(currentIteration);
                 model.setColor(Color.WHITE);
+                inputField.setText(String.valueOf(model.getMaxIterations()));
                 updatePanel();
             }
         });
 
+        purple = new JButton("Purple");
+        purple.addActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // TODO Auto-generated method stub
+                record.addUndo(model);
+                int currentIteration = model.getMaxIterations();
+                model = new Model();
+                model.changeIteration(currentIteration);
+                model.setColor(GUIDisplay.PURPLE);
+                inputField.setText(String.valueOf(model.getMaxIterations()));
+                updatePanel();
+            }
+        });
+        
         JLabel label = new JLabel("Iterations: ");
         
         inputField.addKeyListener(new KeyListener(){        // to translate key event for the text filed into appropriate model method call
@@ -237,6 +259,7 @@ public class GuiDelegate {
         toolbar.add(green);
         toolbar.add(blue);
         toolbar.add(white);
+        toolbar.add(purple);
         toolbar.addSeparator();
         toolbar.add(undo);
         toolbar.add(redo);
@@ -283,6 +306,8 @@ public class GuiDelegate {
                         model = new Model();
                         model = (Model) ois.readObject();
                         updatePanel();
+                        
+                        record.clear();
                         
                         ois.close();
                         fis.close();

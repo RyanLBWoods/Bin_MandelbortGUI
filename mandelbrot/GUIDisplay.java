@@ -1,5 +1,7 @@
 package mandelbrot;
 
+import java.awt.Color;
+
 import javax.swing.JPanel;
 
 /**
@@ -16,6 +18,8 @@ public class GUIDisplay extends JPanel {
     private static final long serialVersionUID = 1L;
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
+    
+    public static final Color PURPLE = new Color(255, 0, 255);
 
     @SuppressWarnings("unused")
     public static void main(String[] args) {

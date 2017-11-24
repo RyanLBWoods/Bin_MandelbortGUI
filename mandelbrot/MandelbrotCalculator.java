@@ -21,7 +21,7 @@ public class MandelbrotCalculator implements Serializable {
     /**
      * 
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -7934849979804107551L;
     // Initial parameter values
     protected static final double INITIAL_MIN_REAL = -2.0;
     protected static final double INITIAL_MAX_REAL = 0.7;
