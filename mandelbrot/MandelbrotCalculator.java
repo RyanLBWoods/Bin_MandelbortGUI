@@ -1,5 +1,7 @@
 package mandelbrot;
 
+import java.io.Serializable;
+
 /**
  * The MandelbrotCalculator class contains methods which establish the Mandelbrot set.
  * The calcMandelbrotSet method below iterates over X,Y positions and establishes for specified parameter values a 2-D array containing
@@ -14,8 +16,12 @@ package mandelbrot;
  * @author jonl
  *
  */
-public class MandelbrotCalculator {
+public class MandelbrotCalculator implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     // Initial parameter values
     protected static final double INITIAL_MIN_REAL = -2.0;
     protected static final double INITIAL_MAX_REAL = 0.7;

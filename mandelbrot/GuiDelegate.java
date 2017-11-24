@@ -281,7 +281,7 @@ public class GuiDelegate {
                         ObjectInputStream ois = new ObjectInputStream(fis);
                         
                         model = new Model();
-                        model.load((Settings) ois.readObject());
+                        model = (Model) ois.readObject();
                         updatePanel();
                         
                         ois.close();
@@ -305,12 +305,10 @@ public class GuiDelegate {
                 if(returnVal == JFileChooser.APPROVE_OPTION){
                     File f = fc.getSelectedFile();
                     try {
-//                        FileOutputStream fos = new FileOutputStream(f);
                         OutputStream os = new FileOutputStream(f);
                         BufferedOutputStream buf = new BufferedOutputStream(os);
                         ObjectOutputStream oos = new ObjectOutputStream(buf);
-//                        Settings setting = new Settings(model);
-                        oos.writeObject(new Settings(model));
+                        oos.writeObject(model);
                         oos.close();
                         buf.close();
                         os.close();
