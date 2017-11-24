@@ -12,12 +12,18 @@ import java.io.Serializable;
 public class Model implements Serializable {
 
     /**
-     * 
+     * Generated serial version UID.
      */
     private static final long serialVersionUID = 7855006198479249120L;
+    /**
+     * Default resolution for model.
+     */
     private static final int DEFAULT_WIDTH = 1000;
     private static final int DEFAULT_HEIGHT = 1000;
 
+    /**
+     * Model's attributes.
+     */
     private MandelbrotCalculator mc;
     private int[][] mcdata;
 
@@ -27,7 +33,7 @@ public class Model implements Serializable {
     private Color color;
 
     /**
-     * Constructor.
+     * Initiate model.
      */
     public Model() {
         this.xR = DEFAULT_WIDTH;
@@ -70,14 +76,16 @@ public class Model implements Serializable {
         this.mcdata = mc.calcMandelbrotSet(xR, yR, minR, maxR, minImg, maxImg, maxIterations, radiusSquared);
     }
 
+    /**
+     * Method to change the max iterations
+     * 
+     * @param newIterations
+     *            Number of new max iterations
+     */
     public void changeIteration(int newIterations) {
         this.maxIterations = newIterations;
         this.mc = new MandelbrotCalculator();
         this.mcdata = mc.calcMandelbrotSet(xR, yR, minR, maxR, minImg, maxImg, maxIterations, radiusSquared);
-    }
-
-    public void getSetting() {
-
     }
 
     public int[][] getMandelbrot_data() {
@@ -116,6 +124,9 @@ public class Model implements Serializable {
         return radiusSquared;
     }
 
+    /**
+     * Method to reset model.
+     */
     public void reset() {
         // TODO Auto-generated method stub
         this.minR = MandelbrotCalculator.INITIAL_MIN_REAL;
@@ -133,6 +144,12 @@ public class Model implements Serializable {
         return color;
     }
 
+    /**
+     * Method to set color.
+     * 
+     * @param color
+     *            The color to set
+     */
     public void setColor(Color color) {
         // TODO Auto-generated method stub
         this.color = color;

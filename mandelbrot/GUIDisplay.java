@@ -13,15 +13,23 @@ import javax.swing.JPanel;
 public class GUIDisplay extends JPanel {
 
     /**
-     * Default serial version UID;
+     * Default serial version UID.
      */
     private static final long serialVersionUID = 1L;
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
-    
+    /**
+     * A customised color.
+     */
     public static final Color PURPLE = new Color(255, 0, 255);
 
     @SuppressWarnings("unused")
+    /**
+     * Main method to run the program display the GUI.
+     * 
+     * @param args
+     *            Running arguments
+     */
     public static void main(String[] args) {
         // TODO Auto-generated method stub
         Model model = new Model();

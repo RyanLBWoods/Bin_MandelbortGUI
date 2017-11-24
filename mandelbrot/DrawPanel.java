@@ -21,8 +21,10 @@ public class DrawPanel extends JPanel {
     Model model;
 
     /**
-     * Constructor.
-     * @param model The model which provides data for panel to draw
+     * Initiate panel.
+     * 
+     * @param model
+     *            The model which provides data for panel to draw
      */
     public DrawPanel(Model model) {
         this.model = model;
@@ -30,7 +32,9 @@ public class DrawPanel extends JPanel {
 
     /**
      * Method to change the model
-     * @param model The model which provides data for panel to draw
+     * 
+     * @param model
+     *            The model which provides data for panel to draw
      */
     public void updateModel(Model model) {
         this.model = model;
@@ -40,6 +44,7 @@ public class DrawPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         // TODO Auto-generated method stub
         super.paintComponent(g);
+        // Draw panel according to mandelbrot set
         int[][] mdata = model.getMandelbrot_data();
         int maxIt = model.getMaxIterations();
         for (int x = 0; x < mdata.length; x++) {
@@ -48,14 +53,14 @@ public class DrawPanel extends JPanel {
 
                     // int current = mdata[x][y] / model.getMaxIterations();
                     float current = (float) mdata[x][y] / model.getMaxIterations();
-
+                    // Draw color
                     if (model.getColor().equals(Color.RED)) {
                         g.setColor(new Color(current, 0, 0));
                     } else if (model.getColor().equals(Color.GREEN)) {
                         g.setColor(new Color(0, current, 0));
                     } else if (model.getColor().equals(Color.BLUE)) {
                         g.setColor(new Color(0, 0, current));
-                    } else if(model.getColor().equals(GUIDisplay.PURPLE)){
+                    } else if (model.getColor().equals(GUIDisplay.PURPLE)) {
                         g.setColor(new Color(current, 0, current));
                     } else {
                         g.setColor(new Color(255, 255, 255));
