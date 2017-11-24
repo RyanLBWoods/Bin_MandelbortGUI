@@ -1,10 +1,12 @@
 package mandelbrot;
 
+import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -12,15 +14,18 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.Stack;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -45,7 +50,7 @@ public class GuiDelegate {
     private static final int FRAME_WIDTH = 1000;
     private static final int TEXT_WIDTH = 10;
     
-    private JFrame mainFrame;
+    private JFrame frame;
     
     private JToolBar toolbar;
     private JTextField inputField;
@@ -78,7 +83,7 @@ public class GuiDelegate {
      */
     public GuiDelegate(Model model){
         this.model = model;
-        this.mainFrame = new JFrame();  // set up the main frame for this GUI
+        this.frame = new JFrame();  // set up the main frame for this GUI
         menu = new JMenuBar();
         toolbar = new JToolBar();
         inputField = new JTextField(TEXT_WIDTH);
@@ -102,7 +107,7 @@ public class GuiDelegate {
                 // should  call method in model class if you want it to affect model
                 
                 if(record.undo.isEmpty()){
-                    JOptionPane.showMessageDialog(mainFrame, "Cannot Undo");
+                    JOptionPane.showMessageDialog(frame, "Cannot Undo");
                 } else {
                     record.addRedo(model);
                     model = new Model();
@@ -118,7 +123,7 @@ public class GuiDelegate {
             public void actionPerformed(ActionEvent e){
                 // should  call method in model class if you want it to affect model
                 if(record.redo.isEmpty()){
-                    JOptionPane.showMessageDialog(mainFrame, "Cannot Redo");
+                    JOptionPane.showMessageDialog(frame, "Cannot Redo");
                 } else {
                     record.addUndo(model);
                     model = new Model();
@@ -269,7 +274,7 @@ public class GuiDelegate {
         toolbar.add(inputField);
         toolbar.add(apply);
         // add toolbar to north of main frame
-        mainFrame.add(toolbar, BorderLayout.NORTH);
+        frame.add(toolbar, BorderLayout.NORTH);
     }
 
     
@@ -345,7 +350,7 @@ public class GuiDelegate {
             }
         });     
         // add menubar to frame
-        mainFrame.setJMenuBar(menu);
+        frame.setJMenuBar(menu);
     }
     
     /**
@@ -362,39 +367,47 @@ public class GuiDelegate {
             public void mouseReleased(MouseEvent e) {
                 // TODO Auto-generated method stub
                 
-                Graphics2D g2 = (Graphics2D) panel.getGraphics();
-                g2.setXORMode(Color.WHITE);
-                g2.draw(rect);
-                g2.setPaintMode();
-                g2.dispose();
-                begin = null;
-                rect = null;
+                    
+                    
+                if(e.getButton() == MouseEvent.BUTTON1){
+                    Graphics2D g2 = (Graphics2D) panel.getGraphics();
+                    g2.setXORMode(Color.WHITE);
+                    g2.draw(rect);
+                    g2.setPaintMode();
+                    g2.dispose();
+                    begin = null;
+                    rect = null;
+                    System.out.println("Mouse released at " + e.getX() + ", " + e.getY());
+                    mouseRx = (double) e.getX();
+                    mouseRy = (double) e.getY();
+                    
+                    if(mousePx > mouseRx){
+                        double temp = mousePx;
+                        mousePx = mouseRx;
+                        mouseRx = temp;
+                    }
+                    
+                    if(mousePy > mouseRy){
+                        double temp = mousePy;
+                        mousePy = mouseRy;
+                        mouseRy = temp;
+                    }
+                    getNewLocation(mousePx, mousePy, mouseRx, mouseRy);
+                    }
                 
-                System.out.println("Mouse released at " + e.getX() + ", " + e.getY());
-                mouseRx = (double) e.getX();
-                mouseRy = (double) e.getY();
-                
-                if(mousePx > mouseRx){
-                    double temp = mousePx;
-                    mousePx = mouseRx;
-                    mouseRx = temp;
-                }
-                
-                if(mousePy > mouseRy){
-                    double temp = mousePy;
-                    mousePy = mouseRy;
-                    mouseRy = temp;
-                }
-                getNewLocation(mousePx, mousePy, mouseRx, mouseRy);
             }
             
             @Override
             public void mousePressed(MouseEvent e) {
                 // TODO Auto-generated method stub
-                System.out.println("Mouse pressed at " + e.getX() + ", " + e.getY());
-                mousePx = (double) e.getX();
-                mousePy = (double) e.getY();
                 begin = e.getPoint();
+                if(e.getButton() == MouseEvent.BUTTON1){
+                    System.out.println("Mouse pressed at " + e.getX() + ", " + e.getY());
+                    mousePx = (double) e.getX();
+                    mousePy = (double) e.getY();
+                    
+                }
+                
             }
             
             @Override
@@ -413,6 +426,20 @@ public class GuiDelegate {
             public void mouseClicked(MouseEvent e) {
                 // TODO Auto-generated method stub
                 
+                if(e.getButton() == MouseEvent.BUTTON3 && e.getClickCount() == 2){
+                    try {
+                        File jpg = new File("MandelbrotSet.jpg");
+                        OutputStream os = new FileOutputStream(jpg);
+                        BufferedImage img = new Robot().createScreenCapture(new Rectangle(0, 110, panel.getWidth(), panel.getHeight()));
+                        ImageIO.write(img, "jpg", os);
+                    } catch (AWTException e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    } catch (IOException e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    }
+                }
             }
         });
         
@@ -441,11 +468,11 @@ public class GuiDelegate {
                 g2.dispose();
             }
         });
-        mainFrame.setTitle("Mandelbort Set Display");
-        mainFrame.add(panel, BorderLayout.CENTER);
-        mainFrame.setSize (FRAME_WIDTH, FRAME_HEIGHT);
-        mainFrame.setVisible(true);
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setTitle("Mandelbort Set Display");
+        frame.add(panel, BorderLayout.CENTER);
+        frame.setSize (FRAME_WIDTH, FRAME_HEIGHT);
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
     public void getNewLocation(double px, double py, double rx, double ry){
