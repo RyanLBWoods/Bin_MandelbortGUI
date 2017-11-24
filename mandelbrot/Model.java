@@ -133,4 +133,18 @@ public class Model {
         this.color = color;
     }
 
+    public void load(Settings settings) {
+        // TODO Auto-generated method stub
+        this.minR = settings.getMinRealSetting();
+        this.maxR = settings.getMaxRealSetting();
+        this.minImg = settings.getMinImaginarySetting();
+        this.maxImg = settings.getMaxImaginarySetting();
+        this.maxIterations = settings.getMaxIterationsSetting();
+        this.radiusSquared = settings.getRadiusSquaredSetting();
+        this.color = settings.getColorSetting();
+        
+        this.mc = new MandelbrotCalculator();
+        this.mcdata = mc.calcMandelbrotSet(xR, yR, minR, maxR, minImg, maxImg, maxIterations, radiusSquared);
+    }
+
 }

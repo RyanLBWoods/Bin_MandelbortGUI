@@ -12,9 +12,15 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Stack;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -216,8 +222,10 @@ public class GuiDelegate {
         apply.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 record.addUndo(model);
+                Color currentColor = model.getColor();
                 model = new Model();
                 model.changeIteration(Integer.valueOf(inputField.getText()));
+                model.setColor(currentColor);
                 updatePanel();
             }
         });
@@ -256,13 +264,56 @@ public class GuiDelegate {
         load.addActionListener(new ActionListener(){ 
             public void actionPerformed(ActionEvent e) {
                 // should call appropriate method in model class if you want it to do something useful
-                JOptionPane.showMessageDialog(mainFrame, "Ooops, Load not linked to model!");
+                JFileChooser fc = new JFileChooser();
+                fc.setMultiSelectionEnabled(false);
+                fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+                File dir = new File(System.getProperty("user.dir"));
+                fc.setCurrentDirectory(dir);
+                int returnVal = fc.showOpenDialog(fc);
+                if(returnVal == JFileChooser.APPROVE_OPTION){
+                    
+                    File f = fc.getSelectedFile();
+                    try {
+                        System.out.println("File is " + f.toString());
+                        FileInputStream fis = new FileInputStream(f);
+                        ObjectInputStream ois = new ObjectInputStream(fis);
+                        
+                        model = new Model();
+                        model.load((Settings) ois.readObject());
+                        updatePanel();
+                        
+                        ois.close();
+                        fis.close();
+                    } catch (Exception e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    }
+                }
             }
         });
         save.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 // should call appropriate method in model class if you want it to do something useful
-                JOptionPane.showMessageDialog(mainFrame, "Ooops, Save not linked to model!");
+                JFileChooser fc = new JFileChooser();
+                fc.setMultiSelectionEnabled(false);
+                fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+                File dir = new File(System.getProperty("user.dir"));
+                fc.setCurrentDirectory(dir);
+                int returnVal = fc.showOpenDialog(fc);
+                if(returnVal == JFileChooser.APPROVE_OPTION){
+                    File f = fc.getSelectedFile();
+                    try {
+                        FileOutputStream fos = new FileOutputStream(f);
+                        ObjectOutputStream oos = new ObjectOutputStream(fos);
+                        Settings setting = new Settings(model);
+                        oos.writeObject(setting);
+                        oos.close();
+                        oos.close();
+                    } catch (Exception e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    }
+                }
             }
         });     
         // add menubar to frame
